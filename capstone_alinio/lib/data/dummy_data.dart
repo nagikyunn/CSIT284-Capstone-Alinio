@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:capstone_alinio/models/student_model.dart';
+import 'package:capstone_alinio/models/students_model.dart';
 import 'package:capstone_alinio/models/session_model.dart';
 import 'package:capstone_alinio/models/attendance_model.dart';
 
