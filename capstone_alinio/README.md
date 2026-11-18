@@ -1,17 +1,9 @@
-# capstone_alinio
+# QR-Based Attendance Checker (CSIT284)
 
-A new Flutter project.
+* **Project Title:** QR-Based Attendance Checker Mobile Application
+* **Student Name:** Jan Lloyd Saot Alinio
+* **Workstation Number:** W02
+* **Course & Section:** CSIT284 Platform-Based Development (Mobile) - Section G01
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Project Description
+A lightweight mobile application built with Flutter to streamline classroom attendance tracking. It features a dual-mode interface enabling teachers to generate time-sensitive session QR codes and students to instantly scan and check in, maintaining a real-time attendance list view.
