@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:capstone_alinio/data/dummy_data.dart';
 import 'package:capstone_alinio/models/students_model.dart';
+import 'package:capstone_alinio/models/attendance_model.dart';
 
 class StudentScannerScreen extends StatefulWidget {
   const StudentScannerScreen({super.key});
@@ -12,7 +13,6 @@ class StudentScannerScreen extends StatefulWidget {
 
 class _StudentScannerScreenState extends State<StudentScannerScreen> {
   Student? _selectedStudent;
-  bool _hasScanned = false;
   final MobileScannerController _controller = MobileScannerController();
 
   @override
@@ -22,10 +22,38 @@ class _StudentScannerScreenState extends State<StudentScannerScreen> {
   }
 
   void _markPresent(String token) {
-    if (_hasScanned) return;
+    if (!AppStateData.isSessionActive) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error: No active session! Ask the teacher to start a session first.')),
+      );
+      return;
+    }
+
+    // Check if student already checked in
+    final alreadyCheckedIn = AppStateData.liveAttendanceList.any(
+      (record) => record.studentId == _selectedStudent?.studentId,
+    );
+
+    if (alreadyCheckedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${_selectedStudent?.name} is already marked Present!')),
+      );
+      return;
+    }
+
     setState(() {
-      _hasScanned = true;
+      AppStateData.liveAttendanceList.add(
+        AttendanceRecord(
+          attendanceId: DateTime.now().millisecondsSinceEpoch.toString(),
+          sessionId: "sess_csit284_g01",
+          studentId: _selectedStudent!.studentId,
+          studentName: _selectedStudent!.name,
+          status: "Present",
+          scannedAt: TimeOfDay.now().format(context),
+        ),
+      );
     });
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${_selectedStudent?.name} marked Present successfully!')),
     );
@@ -93,7 +121,7 @@ class _StudentScannerScreenState extends State<StudentScannerScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: () => _markPresent(activeSessionMock.qrToken),
+              onPressed: () => _markPresent(AppStateData.activeQrToken),
               icon: const Icon(Icons.bolt),
               label: const Text('Simulate QR Scan (For Emulators)'),
               style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(16)),

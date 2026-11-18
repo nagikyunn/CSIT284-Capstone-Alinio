@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:capstone_alinio/data/dummy_data.dart';
-import 'package:capstone_alinio/models/attendance_model.dart';
 import 'package:capstone_alinio/widgets/attendance_tile.dart';
 
 class TeacherDashboardScreen extends StatefulWidget {
@@ -12,16 +11,11 @@ class TeacherDashboardScreen extends StatefulWidget {
 }
 
 class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
-  bool _isSessionActive = false;
-  final List<AttendanceRecord> _liveAttendance = [];
-
   void _toggleSession() {
     setState(() {
-      _isSessionActive = !_isSessionActive;
-      if (_isSessionActive) {
-        _liveAttendance.addAll(initialAttendanceLogs);
-      } else {
-        _liveAttendance.clear();
+      AppStateData.isSessionActive = !AppStateData.isSessionActive;
+      if (!AppStateData.isSessionActive) {
+        AppStateData.liveAttendanceList.clear();
       }
     });
   }
@@ -42,10 +36,10 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _isSessionActive ? 'Status: Session Active' : 'Status: No Active Session',
+                      AppStateData.isSessionActive ? 'Status: Session Active' : 'Status: No Active Session',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: _isSessionActive ? Colors.green.shade700 : Colors.red.shade700,
+                        color: AppStateData.isSessionActive ? Colors.green.shade700 : Colors.red.shade700,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -55,15 +49,15 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                 ElevatedButton(
                   onPressed: _toggleSession,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isSessionActive ? Colors.red : Colors.green,
+                    backgroundColor: AppStateData.isSessionActive ? Colors.red : Colors.green,
                     foregroundColor: Colors.white,
                   ),
-                  child: Text(_isSessionActive ? 'End Session' : 'Start Session'),
+                  child: Text(AppStateData.isSessionActive ? 'End Session' : 'Start Session'),
                 ),
               ],
             ),
           ),
-          if (_isSessionActive)
+          if (AppStateData.isSessionActive)
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Card(
@@ -77,13 +71,13 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                       ),
                       const SizedBox(height: 12),
                       QrImageView(
-                        data: activeSessionMock.qrToken,
+                        data: AppStateData.activeQrToken,
                         version: QrVersions.auto,
                         size: 180.0,
                         backgroundColor: Colors.white,
                       ),
                       const SizedBox(height: 8),
-                      Text('Token: ${activeSessionMock.qrToken}', style: const TextStyle(color: Colors.grey)),
+                      Text('Token: ${AppStateData.activeQrToken}', style: const TextStyle(color: Colors.grey)),
                     ],
                   ),
                 ),
@@ -97,12 +91,12 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
             ),
           ),
           Expanded(
-            child: _liveAttendance.isEmpty
+            child: AppStateData.liveAttendanceList.isEmpty
                 ? const Center(child: Text('No students checked in yet.'))
                 : ListView.builder(
-                    itemCount: _liveAttendance.length,
+                    itemCount: AppStateData.liveAttendanceList.length,
                     itemBuilder: (context, index) {
-                      return AttendanceTile(record: _liveAttendance[index]);
+                      return AttendanceTile(record: AppStateData.liveAttendanceList[index]);
                     },
                   ),
           ),
